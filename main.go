@@ -6,8 +6,15 @@ import (
 	"math/rand/v2"
 	"net/http"
 	"ocache/impl"
+	"ocache/ocache"
 	"sync"
 )
+
+type stringClient string
+
+func (s stringClient) Get(group string, key string) (ocache.Value, error) {
+	return nil, nil
+}
 
 const PEER_NUM = 2
 const REPLICAS = 4
@@ -54,6 +61,21 @@ func main() {
 		}
 	}
 	getter := impl.NewDbGetter(db)
+
+	// 验证 Scores group key 分布
+	fmt.Println("Key distribution for group 'Scores':")
+	pickerPeers := make([]string, 0, PEER_NUM)
+	pickerClients := make([]ocache.Client, 0, PEER_NUM)
+	for i := range PEER_NUM {
+		addr := fmt.Sprintf("http://127.0.0.1:%d", PORT_BASE+i)
+		pickerPeers = append(pickerPeers, addr)
+		pickerClients = append(pickerClients, stringClient(addr))
+	}
+	picker := impl.NewHashPeerPicker(REPLICAS, pickerPeers, pickerClients, crc32.ChecksumIEEE)
+	for _, key := range keys {
+		cli := picker.PickPeer(key)
+		fmt.Printf("Key: %s -> Peer: %s\n", key, cli)
+	}
 
 	var wg sync.WaitGroup
 	for i := range PEER_NUM {
