@@ -7,7 +7,7 @@ type Group struct {
 	cache      Cache
 	peerPicker PeerPicker // TODO thread safe
 	getter     Getter     // TODO thread safe
-	table Table
+	table      Table
 }
 
 func NewGroup(groupName string, maxBytes int, peerPicker PeerPicker, getter Getter) *Group {
@@ -15,7 +15,7 @@ func NewGroup(groupName string, maxBytes int, peerPicker PeerPicker, getter Gett
 		groupName: groupName,
 		cache: Cache{
 			lru: lruCache{
-				m: make(map[string]*list.Element),
+				m:        make(map[string]*list.Element),
 				capacity: maxBytes,
 			},
 		},

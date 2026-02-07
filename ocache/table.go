@@ -3,17 +3,17 @@ package ocache
 import "sync"
 
 type status struct {
-	wg sync.WaitGroup
+	wg  sync.WaitGroup
 	res Value
 	err error
 }
 
 type Table struct {
 	mtx sync.Mutex
-	m map[string]*status
+	m   map[string]*status
 }
 
-func (t *Table) Do(group string, key string, fn func(string, string)(Value, error)) (Value, error) {
+func (t *Table) Do(group string, key string, fn func(string, string) (Value, error)) (Value, error) {
 	t.mtx.Lock()
 	if t.m == nil {
 		t.m = make(map[string]*status)
