@@ -20,6 +20,12 @@ func FromString(s string) *ByteView {
 	}
 }
 
+func NewByteView(data []byte) *ByteView {
+	return &ByteView{
+		data: data,
+	}
+}
+
 func (v *ByteView) Len() int {
 	return len(v.data)
 }

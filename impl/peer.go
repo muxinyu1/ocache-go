@@ -3,6 +3,7 @@ package impl
 import (
 	"fmt"
 	"net/http"
+	"ocache/bloom"
 	"ocache/ocache"
 	"strings"
 )
@@ -19,7 +20,8 @@ func NewPeer(
 	portBase int,
 	replicas int,
 	hasher Hasher,
-	getter ocache.Getter) *Peer {
+	getter ocache.Getter,
+	bf *bloom.BloomFilter) *Peer {
 	m := make(map[string]*ocache.Group)
 	clients := make([]ocache.Client, 0, total)
 	peers := make([]string, 0, total)
@@ -46,6 +48,7 @@ func NewPeer(
 			groupBytes[i],
 			peerPicker,
 			getter,
+			bf,
 		)
 	}
 	return &Peer{

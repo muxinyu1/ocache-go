@@ -8,7 +8,7 @@ import (
 
 type Cache struct {
 	mtx sync.Mutex
-	lru lruCache
+	lru *lruCache
 }
 
 func (c *Cache) Get(key string) (Value, error) {
